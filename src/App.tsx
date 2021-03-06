@@ -1,11 +1,14 @@
-import React from 'react'
+import { useEffect } from 'react'
 import logo from './logo.svg'
 import './App.scss'
 import CustomerData from './components/CustomerData/CustomerData'
 import AccountInformation from './components/AccountInformation/AccountInformation'
 import Transactions from './components/Transactions/Transactions'
+import Carter from './data/apollo-carter.json'
 
 function App() {
+  useEffect(() => {}, [])
+
   return (
     <div className='App'>
       <CustomerData />

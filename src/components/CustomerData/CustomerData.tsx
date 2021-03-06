@@ -4,8 +4,10 @@ function CustomerData() {
   return (
     <section className='customer-data-block'>
       <div className='section-title'>Account Holder Name</div>
-      <div>Provider Name: Provider Name</div>
-      <div>Country Code: Country Code</div>
+      <div className='details-block'>
+        <div>Provider Name: Omnino Transkei</div>
+        <div>Country Code: BW</div>
+      </div>
     </section>
   )
 }
