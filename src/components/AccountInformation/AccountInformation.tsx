@@ -19,8 +19,8 @@ function AccountInformation(props: AccountInformationPropsType) {
     }
   }
 
-  useEffect(() => {
-    console.log('props', props['accounts'])
+  const calculateTotals = () => {
+    // console.log('props', props['accounts'])
 
     let debitsSum: number[] = []
     let creditsSum: number[] = []
@@ -34,7 +34,12 @@ function AccountInformation(props: AccountInformationPropsType) {
 
     setDebitsTotal(sumArray(debitsSum).toFixed(2))
     setCreditsTotal(sumArray(creditsSum).toFixed(2))
-  }, [props, props['accounts']])
+  }
+
+  useEffect(() => {
+    // console.log('props', props['accounts'])
+    calculateTotals()
+  }, [props, props['accounts'], calculateTotals])
 
   return (
     <section className='account-holder-block'>

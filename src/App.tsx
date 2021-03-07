@@ -6,12 +6,6 @@ import AccountInformation from './components/AccountInformation/AccountInformati
 import Transactions from './components/Transactions/Transactions'
 
 function App() {
-  // interface IData {
-  //   providerName: string
-  //   countryCode: string
-  //   accounts: []
-  // }
-
   const [data, setData] = useState<any>({})
 
   const getData = () => {
@@ -37,16 +31,18 @@ function App() {
   return (
     <div className='App'>
       {Object.keys(data).length > 0 && (
-        <CustomerData
-          providerName={data.providerName}
-          countryCode={data.countryCode}
-          accountHolderNames={data.accounts[0].accountHolderNames}
-        />
-      )}
-      <AccountInformation accounts={data.accounts} />
-      <Transactions />
+        <>
+          <CustomerData
+            providerName={data.providerName}
+            countryCode={data.countryCode}
+            accountHolderNames={data.accounts[0].accountHolderNames}
+          />
 
-      <header className='App-header'>
+          <AccountInformation accounts={data.accounts} />
+          <Transactions transactions={data.accounts[0].transactions} />
+        </>
+      )}
+      {/* <header className='App-header'>
         <img src={logo} className='App-logo' alt='logo' />
         <a
           className='App-link'
@@ -56,7 +52,7 @@ function App() {
         >
           Learn React
         </a>
-      </header>
+      </header> */}
     </div>
   )
 }
