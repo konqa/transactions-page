@@ -29,11 +29,9 @@ function Transactions(props: TransactionsProps) {
     setTransactionRows(props.transactions)
     setCurrentTotalTransactions(props.transactions.length)
     setCurrentPageNumber(1)
-    setCurrentSearchText('')
-    console.log('BLANK', transactionRows)
   }
 
-  const processSearch = (value: string) => {
+  const processSearch = (value: string): void => {
     const regexp = new RegExp(value, 'gi')
     let newRows = props.transactions.filter(
       (transaction) => transaction.description.search(regexp) > -1
@@ -42,12 +40,13 @@ function Transactions(props: TransactionsProps) {
     setCurrentTotalTransactions(newRows.length)
     setCurrentPageNumber(1)
     setCurrentSearchText(value)
-    console.log('newRows', newRows)
+    // console.log('newRows', newRows)
   }
 
-  const onSearch = (value: string) => {
-    console.log(`search text ${value}`)
-    if (value === '') {
+  const onSearch = (value: string): void => {
+    if (value === currentSearchText) {
+      return
+    } else if (value === '') {
       resetSearch()
     } else {
       processSearch(value)
@@ -75,7 +74,7 @@ function Transactions(props: TransactionsProps) {
             placeholder='Search'
             allowClear
             onSearch={onSearch}
-            style={{ width: 300 }}
+            style={{ width: 400 }}
           />
         </div>
         <div className='section-title'>
