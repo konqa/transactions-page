@@ -1,25 +1,49 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import logo from './logo.svg'
 import './App.scss'
 import CustomerData from './components/CustomerData/CustomerData'
 import AccountInformation from './components/AccountInformation/AccountInformation'
 import Transactions from './components/Transactions/Transactions'
-import Carter from './data/apollo-carter.json'
 
 function App() {
-  useEffect(() => {}, [])
+  const [data, setData] = useState<any>({})
+
+  const getData = () => {
+    try {
+      fetch('./data/apollo-carter.json')
+        .then((response) => {
+          console.log(response)
+          return response.json()
+        })
+        .then((jsonData) => {
+          console.log(jsonData)
+          setData(jsonData)
+        })
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
 
   return (
     <div className='App'>
-      <CustomerData />
-      <AccountInformation />
-      <Transactions />
+      {Object.keys(data).length > 0 && (
+        <>
+          <CustomerData
+            providerName={data.providerName}
+            countryCode={data.countryCode}
+            accountHolderNames={data.accounts[0].accountHolderNames}
+          />
 
-      <header className='App-header'>
+          <AccountInformation accounts={data.accounts} />
+          <Transactions transactions={data.accounts[0].transactions} />
+        </>
+      )}
+      {/* <header className='App-header'>
         <img src={logo} className='App-logo' alt='logo' />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
         <a
           className='App-link'
           href='https://reactjs.org'
@@ -28,7 +52,7 @@ function App() {
         >
           Learn React
         </a>
-      </header>
+      </header> */}
     </div>
   )
 }
