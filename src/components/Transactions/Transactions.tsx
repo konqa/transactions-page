@@ -13,24 +13,55 @@ const { Search } = Input
 function Transactions(props: TransactionsProps) {
   const [pageSizes] = useState<string[]>(['25', '50', '100'])
   const [currentPageSize, setCurrentPageSize] = useState<number>(25)
+  const [
+    currentTotalTransactions,
+    setCurrentTotalTransactions,
+  ] = useState<number>(props.transactions.length)
   const [currentPageNumber, setCurrentPageNumber] = useState<number>(1)
+  const [currentSearchText, setCurrentSearchText] = useState<string>('')
+  const [transactionRows, setTransactionRows] = useState(props.transactions)
 
   useEffect(() => {
     console.log('props', props)
   }, [])
 
-  const onSearch = (value: string) => {
-    console.log(`search text ${value}`)
+  const resetSearch = (): void => {
+    setTransactionRows(props.transactions)
+    setCurrentTotalTransactions(props.transactions.length)
+    setCurrentPageNumber(1)
+    setCurrentSearchText('')
+    console.log('BLANK', transactionRows)
   }
 
-  const onFlipPage = (value: number) => {
+  const processSearch = (value: string) => {
+    let newRows = transactionRows.filter((transaction) =>
+      transaction.description.includes(value)
+    )
+    console.log('newRows', newRows)
+    setTransactionRows(newRows)
+    setCurrentTotalTransactions(newRows.length)
+    setCurrentPageNumber(1)
+    setCurrentSearchText(value)
+  }
+
+  const onSearch = (value: string) => {
+    console.log(`search text ${value}`)
+    if (value === '') {
+      resetSearch()
+    } else {
+      processSearch(value)
+    }
+  }
+
+  const onFlipPage = (value: number): void => {
     console.log(`new page ${value}`)
     setCurrentPageNumber(value)
   }
 
-  const handlePageSizeChange = (value: string) => {
+  const handlePageSizeChange = (value: string): void => {
     console.log(`page size selected ${value}`)
     setCurrentPageSize(Number(value))
+    setCurrentPageNumber(1)
   }
 
   return (
@@ -64,11 +95,12 @@ function Transactions(props: TransactionsProps) {
         <div>Amount</div>
       </div>
 
-      {props.transactions &&
-        props.transactions.map(
+      {transactionRows &&
+        transactionRows.map(
           (transaction, index) =>
             index > currentPageSize * (currentPageNumber - 1) &&
-            index < currentPageSize * currentPageNumber && (
+            index < currentPageSize * currentPageNumber &&
+            transaction.description.includes(currentSearchText) && (
               <div key={index} className='transaction-row bordered'>
                 <div className='transaction-row description'>
                   {transaction.bookingDate.substring(0, 10)}
@@ -94,7 +126,8 @@ function Transactions(props: TransactionsProps) {
         <div className='footer-page-flipper'>
           <Pagination
             defaultCurrent={1}
-            total={props.transactions.length}
+            current={currentPageNumber}
+            total={currentTotalTransactions}
             pageSize={currentPageSize}
             showSizeChanger={false}
             onChange={onFlipPage}
