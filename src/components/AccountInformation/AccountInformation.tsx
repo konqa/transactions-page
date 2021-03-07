@@ -1,21 +1,70 @@
 import './AccountInformation.scss'
+import { useEffect, useState, memo } from 'react'
 
-function AccountInformation() {
+interface AccountInformationPropsType {
+  accounts: any[]
+}
+
+function AccountInformation(props: AccountInformationPropsType) {
+  const [debitsTotal, setDebitsTotal] = useState<string>('')
+  const [creditsTotal, setCreditsTotal] = useState<string>('')
+
+  const sumArray = (numbers: number[]): number => {
+    if (numbers.length) {
+      return numbers.reduce((a, b) => {
+        return Number((a + b).toFixed(2))
+      })
+    } else {
+      return 0
+    }
+  }
+
+  useEffect(() => {
+    console.log('props', props['accounts'])
+
+    let debitsSum: number[] = []
+    let creditsSum: number[] = []
+
+    props['accounts'] &&
+      props['accounts'][0].transactions.map((transaction: any) =>
+        transaction.creditDebitIndicator === 'Debit'
+          ? debitsSum.push(transaction.amount)
+          : creditsSum.push(transaction.amount)
+      )
+
+    setDebitsTotal(sumArray(debitsSum).toFixed(2))
+    setCreditsTotal(sumArray(creditsSum).toFixed(2))
+  }, [props, props['accounts']])
+
   return (
     <section className='account-holder-block'>
       <div className='section-title'>Accounts</div>
-      <div className='details-block bordered'>
-        <div>
-          <div>Total Debits: 2000.00</div>
-          <div>Total Credits: 4000.00</div>
+      {props['accounts'] && props['accounts'][0] && (
+        <div className='details-block bordered'>
+          <div>
+            <div>
+              Total Debits:{' '}
+              {`${props['accounts'][0].currencyCode} ${debitsTotal}`}
+            </div>
+            <div>
+              Total Credits:{' '}
+              {`${props['accounts'][0].currencyCode} ${creditsTotal}`}
+            </div>
+          </div>
+          <div>
+            <div>
+              Available Balance:{' '}
+              {`${props['accounts'][0].currencyCode} ${props['accounts'][0].balances.available.amount} ${props['accounts'][0].balances.available.creditDebitIndicator} `}
+            </div>
+            <div>
+              Current Balance:{' '}
+              {`${props['accounts'][0].currencyCode} ${props['accounts'][0].balances.current.amount} ${props['accounts'][0].balances.current.creditDebitIndicator} `}
+            </div>
+          </div>
         </div>
-        <div>
-          <div>Available Balance: 2000.00</div>
-          <div>Current Balance: 2880.00</div>
-        </div>
-      </div>
+      )}
     </section>
   )
 }
 
-export default AccountInformation
+export default memo(AccountInformation)
