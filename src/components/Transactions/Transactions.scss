@@ -8,3 +8,17 @@
   padding: 0 8px;
   color: #cae1e7;
 }
+
+.account-holder-filter-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-page-flipper {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}

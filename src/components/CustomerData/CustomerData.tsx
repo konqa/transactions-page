@@ -1,12 +1,12 @@
 import './CustomerData.scss'
 
-interface CustomerDataPropsType {
+interface CustomerDataProps {
   providerName: string
   countryCode: string
   accountHolderNames: string
 }
 
-function CustomerData(props: CustomerDataPropsType) {
+function CustomerData(props: CustomerDataProps) {
   return (
     <section className='customer-data-block'>
       <div className='section-title'>{props.accountHolderNames}</div>

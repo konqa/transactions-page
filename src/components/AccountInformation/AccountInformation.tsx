@@ -1,11 +1,18 @@
 import './AccountInformation.scss'
 import { useEffect, useState, memo } from 'react'
+import { Select } from 'antd'
 
-interface AccountInformationPropsType {
+interface AccountInformationProps {
   accounts: any[]
 }
 
-function AccountInformation(props: AccountInformationPropsType) {
+const { Option } = Select
+
+const handleChange = (value: string) => {
+  console.log(`selected ${value}`)
+}
+
+function AccountInformation(props: AccountInformationProps) {
   const [debitsTotal, setDebitsTotal] = useState<string>('')
   const [creditsTotal, setCreditsTotal] = useState<string>('')
 
@@ -43,7 +50,20 @@ function AccountInformation(props: AccountInformationPropsType) {
 
   return (
     <section className='account-holder-block'>
-      <div className='section-title'>Accounts</div>
+      <div className='account-holder-header'>
+        <div className='section-title'>Accounts</div>
+        <div className='section-title left-margin-100'>
+          <Select
+            defaultValue='lucy'
+            style={{ width: 200 }}
+            onChange={handleChange}
+          >
+            <Option value='jack'>Jack</Option>
+            <Option value='lucy'>Lucy</Option>
+            <Option value='Yiminghe'>yiminghe</Option>
+          </Select>
+        </div>
+      </div>
       {props['accounts'] && props['accounts'][0] && (
         <div className='details-block bordered'>
           <div>

@@ -29,6 +29,10 @@
   padding-bottom: 24px;
 }
 
+.left-margin-100 {
+  margin-left: 100px;
+}
+
 .details-block {
   display: flex;
   flex-direction: row;
@@ -95,3 +99,5 @@
   margin-bottom: 12px;
   justify-content: space-between;
 }
+
+@import '~antd/dist/antd.css';
