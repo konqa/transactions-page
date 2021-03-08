@@ -1,13 +1,28 @@
 import './AccountInformation.scss'
 import { useEffect, useState, memo } from 'react'
+import { Select } from 'antd'
 
-interface AccountInformationPropsType {
+interface AccountInformationProps {
   accounts: any[]
 }
 
-function AccountInformation(props: AccountInformationPropsType) {
+const { Option } = Select
+
+function AccountInformation(props: AccountInformationProps) {
   const [debitsTotal, setDebitsTotal] = useState<string>('')
   const [creditsTotal, setCreditsTotal] = useState<string>('')
+  const [
+    currentBankAccountIndex,
+    setCurrentBankAccountIndex,
+  ] = useState<number>(0)
+
+  const { transactions, currencyCode, balances } = props.accounts[
+    currentBankAccountIndex
+  ]
+
+  const handleAccountChange = (value: number): void => {
+    setCurrentBankAccountIndex(value)
+  }
 
   const sumArray = (numbers: number[]): number => {
     if (numbers.length) {
@@ -20,13 +35,12 @@ function AccountInformation(props: AccountInformationPropsType) {
   }
 
   const calculateTotals = () => {
-    // console.log('props', props['accounts'])
-
     let debitsSum: number[] = []
     let creditsSum: number[] = []
 
-    props['accounts'] &&
-      props['accounts'][0].transactions.map((transaction: any) =>
+    props.accounts &&
+      props.accounts[currentBankAccountIndex] &&
+      transactions.map((transaction: any) =>
         transaction.creditDebitIndicator === 'Debit'
           ? debitsSum.push(transaction.amount)
           : creditsSum.push(transaction.amount)
@@ -37,33 +51,56 @@ function AccountInformation(props: AccountInformationPropsType) {
   }
 
   useEffect(() => {
-    // console.log('props', props['accounts'])
+    console.log('props acc', props.accounts)
     calculateTotals()
-  }, [props, props['accounts'], calculateTotals])
+  }, [props, props.accounts, calculateTotals])
 
   return (
     <section className='account-holder-block'>
-      <div className='section-title'>Accounts</div>
-      {props['accounts'] && props['accounts'][0] && (
+      <div className='account-holder-header'>
+        <div className='section-title'>Accounts</div>
+        <div className='section-title left-margin-100' id='account-filter'>
+          <Select
+            defaultValue={currentBankAccountIndex}
+            onChange={handleAccountChange}
+          >
+            {props.accounts.map((acc, index) => (
+              <Option key={index} value={index}>
+                {`${acc.accountType}: ${acc.identifiers.accountNumber}-${acc.identifiers.bankCode}`}
+              </Option>
+            ))}
+          </Select>
+        </div>
+      </div>
+      {props.accounts && props.accounts[currentBankAccountIndex] && (
         <div className='details-block bordered'>
-          <div>
-            <div>
-              Total Debits:{' '}
-              {`${props['accounts'][0].currencyCode} ${debitsTotal}`}
+          <div className='details-block'>
+            <div className='info-block'>
+              <div className='info-row'>
+                <div className='info-label'>Total Debits:</div>
+                <div className='info-value'>{`${currencyCode} ${debitsTotal}`}</div>
+              </div>
+              <div className='info-row'>
+                <div className='info-label'>Total Credits:</div>
+                <div className='info-value'>{`${currencyCode} ${creditsTotal}`}</div>
+              </div>
             </div>
-            <div>
-              Total Credits:{' '}
-              {`${props['accounts'][0].currencyCode} ${creditsTotal}`}
-            </div>
-          </div>
-          <div>
-            <div>
-              Available Balance:{' '}
-              {`${props['accounts'][0].currencyCode} ${props['accounts'][0].balances.available.amount} ${props['accounts'][0].balances.available.creditDebitIndicator} `}
-            </div>
-            <div>
-              Current Balance:{' '}
-              {`${props['accounts'][0].currencyCode} ${props['accounts'][0].balances.current.amount} ${props['accounts'][0].balances.current.creditDebitIndicator} `}
+
+            <div className='info-block'>
+              <div className='info-row right'>
+                <div className='info-label'>Available Balance:</div>
+                <div className='info-value'>{`${currencyCode} ${
+                  balances.available.creditDebitIndicator === 'Credit'
+                    ? ''
+                    : '-'
+                } ${balances.available.amount}`}</div>
+              </div>
+              <div className='info-row right'>
+                <div className='info-label'>Current Balance:</div>
+                <div className='info-value'>{`${currencyCode} ${
+                  balances.current.creditDebitIndicator === 'Credit' ? '' : '-'
+                } ${balances.current.amount}`}</div>
+              </div>
             </div>
           </div>
         </div>
