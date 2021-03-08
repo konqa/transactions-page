@@ -21,9 +21,9 @@ function Transactions(props: TransactionsProps) {
   const [currentSearchText, setCurrentSearchText] = useState<string>('')
   const [transactionRows, setTransactionRows] = useState(props.transactions)
 
-  useEffect(() => {
-    console.log('props', props)
-  }, [props])
+  // useEffect(() => {
+  //   console.log('props', props)
+  // }, [props])
 
   const resetSearch = (): void => {
     setTransactionRows(props.transactions)
@@ -40,7 +40,6 @@ function Transactions(props: TransactionsProps) {
     setCurrentTotalTransactions(newRows.length)
     setCurrentPageNumber(1)
     setCurrentSearchText(value)
-    // console.log('newRows', newRows)
   }
 
   const onSearch = (value: string): void => {
@@ -54,13 +53,11 @@ function Transactions(props: TransactionsProps) {
   }
 
   const onFlipPage = (value: number): void => {
-    console.log(`new page ${value}`)
     setCurrentPageNumber(value)
     document.querySelector('#transactions-block')?.scrollIntoView()
   }
 
   const handlePageSizeChange = (value: string): void => {
-    console.log(`page size selected ${value}`)
     setCurrentPageSize(Number(value))
     setCurrentPageNumber(1)
   }
@@ -69,19 +66,13 @@ function Transactions(props: TransactionsProps) {
     <section className='transactions-block' id='transactions-block'>
       <div className='section-title'>Transactions</div>
       <div className='account-holder-filter-row'>
-        <div className='section-title'>
-          <Search
-            placeholder='Search'
-            allowClear
-            onSearch={onSearch}
-            style={{ width: 400 }}
-          />
+        <div className='section-title' id='search-cell'>
+          <Search placeholder='Search' allowClear onSearch={onSearch} />
         </div>
-        <div className='section-title'>
+        <div className='section-title' id='page-size-filter'>
           <Select
             placeholder='Page size'
             defaultValue='25'
-            style={{ width: 200 }}
             onChange={handlePageSizeChange}
           >
             {pageSizes.map((size, index) => (
@@ -107,9 +98,13 @@ function Transactions(props: TransactionsProps) {
               index < currentPageSize * currentPageNumber && (
                 <div key={index} className='transaction-row bordered'>
                   <div className='transaction-row description'>
-                    {transaction.bookingDate.substring(0, 10)}
-                    <span className='transaction-bullet'>&bull;</span>
-                    {transaction.description}
+                    <div className='date'>
+                      {transaction.bookingDate.substring(0, 10)}
+                    </div>
+                    <span className='transaction-bullet'>&bull;</span>{' '}
+                    <div className='description-text'>
+                      {transaction.description}
+                    </div>
                   </div>
                   <div className='transaction-row category'>
                     {transaction.enrichedData.category.name ===
@@ -127,7 +122,7 @@ function Transactions(props: TransactionsProps) {
           )}
         </>
       ) : (
-        <div className='no-transactions'>No transactions found</div>
+        <div className='no-transactions'>No transactions to display</div>
       )}
 
       {transactionRows.length > 0 && (
