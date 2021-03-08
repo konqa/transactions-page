@@ -10,6 +10,11 @@ const { Option } = Select
 
 const { Search } = Input
 
+const moneyShape = new Intl.NumberFormat('us-US', {
+  style: 'currency',
+  currency: 'USD',
+})
+
 function Transactions(props: TransactionsProps) {
   const [pageSizes] = useState<string[]>(['25', '50', '100'])
   const [currentPageSize, setCurrentPageSize] = useState<number>(25)
@@ -116,7 +121,7 @@ function Transactions(props: TransactionsProps) {
                   </div>
                   <div className='transaction-row amount'>{`${
                     transaction.creditDebitIndicator === 'Debit' ? '-' : ''
-                  }${transaction.amount.toFixed(2)}`}</div>
+                  }${moneyShape.format(transaction.amount).substring(1)}`}</div>
                 </div>
               )
           )}

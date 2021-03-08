@@ -8,9 +8,14 @@ interface AccountInformationProps {
 
 const { Option } = Select
 
+const moneyShape = new Intl.NumberFormat('us-US', {
+  style: 'currency',
+  currency: 'USD',
+})
+
 function AccountInformation(props: AccountInformationProps) {
-  const [debitsTotal, setDebitsTotal] = useState<string>('')
-  const [creditsTotal, setCreditsTotal] = useState<string>('')
+  const [debitsTotal, setDebitsTotal] = useState<number>(0)
+  const [creditsTotal, setCreditsTotal] = useState<number>(0)
   const [
     currentBankAccountIndex,
     setCurrentBankAccountIndex,
@@ -46,8 +51,8 @@ function AccountInformation(props: AccountInformationProps) {
           : creditsSum.push(transaction.amount)
       )
 
-    setDebitsTotal(sumArray(debitsSum).toFixed(2))
-    setCreditsTotal(sumArray(creditsSum).toFixed(2))
+    setDebitsTotal(sumArray(debitsSum))
+    setCreditsTotal(sumArray(creditsSum))
   }
 
   useEffect(() => {
@@ -78,11 +83,15 @@ function AccountInformation(props: AccountInformationProps) {
             <div className='info-block'>
               <div className='info-row'>
                 <div className='info-label'>Total Debits:</div>
-                <div className='info-value'>{`${currencyCode} ${debitsTotal}`}</div>
+                <div className='info-value'>{`${currencyCode} ${moneyShape
+                  .format(debitsTotal)
+                  .substring(1)}`}</div>
               </div>
               <div className='info-row'>
                 <div className='info-label'>Total Credits:</div>
-                <div className='info-value'>{`${currencyCode} ${creditsTotal}`}</div>
+                <div className='info-value'>{`${currencyCode} ${moneyShape
+                  .format(creditsTotal)
+                  .substring(1)}`}</div>
               </div>
             </div>
 
@@ -93,13 +102,17 @@ function AccountInformation(props: AccountInformationProps) {
                   balances.available.creditDebitIndicator === 'Credit'
                     ? ''
                     : '-'
-                } ${balances.available.amount}`}</div>
+                } ${moneyShape
+                  .format(balances.available.amount)
+                  .substring(1)}`}</div>
               </div>
               <div className='info-row right'>
                 <div className='info-label'>Current Balance:</div>
                 <div className='info-value'>{`${currencyCode} ${
                   balances.current.creditDebitIndicator === 'Credit' ? '' : '-'
-                } ${balances.current.amount}`}</div>
+                } ${moneyShape
+                  .format(balances.current.amount)
+                  .substring(1)}`}</div>
               </div>
             </div>
           </div>
