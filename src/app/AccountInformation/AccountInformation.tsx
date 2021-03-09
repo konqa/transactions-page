@@ -5,6 +5,8 @@ import NoData from '../NoData/NoData'
 
 interface AccountInformationProps {
   accounts: any[]
+  currentBankAccountIndex: number
+  setBankAccountIndex: any
 }
 
 const { Option } = Select
@@ -17,13 +19,9 @@ const moneyShape = new Intl.NumberFormat('us-US', {
 function AccountInformation(props: AccountInformationProps) {
   const [debitsTotal, setDebitsTotal] = useState<number>(0)
   const [creditsTotal, setCreditsTotal] = useState<number>(0)
-  const [
-    currentBankAccountIndex,
-    setCurrentBankAccountIndex,
-  ] = useState<number>(0)
 
   const handleAccountChange = (value: number): void => {
-    setCurrentBankAccountIndex(value)
+    props.setBankAccountIndex(value)
   }
 
   const sumArray = (numbers: number[]): number => {
@@ -36,15 +34,15 @@ function AccountInformation(props: AccountInformationProps) {
     }
   }
 
-  const calculateTotals = () => {
+  useEffect(() => {
     let debitsSum: number[] = []
     let creditsSum: number[] = []
 
     props.accounts &&
-      currentBankAccountIndex > -1 &&
-      props.accounts[currentBankAccountIndex] &&
+      props.currentBankAccountIndex > -1 &&
+      props.accounts[props.currentBankAccountIndex] &&
       props.accounts[
-        currentBankAccountIndex
+        props.currentBankAccountIndex
       ].transactions.map((transaction: any) =>
         transaction.creditDebitIndicator === 'Debit'
           ? debitsSum.push(transaction.amount)
@@ -53,23 +51,18 @@ function AccountInformation(props: AccountInformationProps) {
 
     setDebitsTotal(sumArray(debitsSum))
     setCreditsTotal(sumArray(creditsSum))
-  }
-
-  useEffect(() => {
-    console.log('props acc', props.accounts)
-    console.log('currentBankAccountIndex', currentBankAccountIndex)
-    calculateTotals()
-  }, [props, props.accounts, calculateTotals])
+  }, [props, props.accounts])
 
   return (
     <section className='account-holder-block'>
-      {props.accounts[0] && props.accounts[0].accountHolderNames ? (
+      {props.accounts[props.currentBankAccountIndex] &&
+      props.accounts[props.currentBankAccountIndex].accountHolderNames ? (
         <>
           <div className='account-holder-header'>
             <div className='section-title'>Accounts</div>
             <div className='section-title left-margin-100' id='account-filter'>
               <Select
-                defaultValue={currentBankAccountIndex}
+                defaultValue={props.currentBankAccountIndex}
                 onChange={handleAccountChange}
                 data-testid='accountItems'
               >
@@ -87,13 +80,13 @@ function AccountInformation(props: AccountInformationProps) {
                 <div className='info-row'>
                   <div className='info-label'>Total Debits:</div>
                   <div className='info-value' data-testid='totalDebits'>{`${
-                    props.accounts[currentBankAccountIndex].currencyCode
+                    props.accounts[props.currentBankAccountIndex].currencyCode
                   } ${moneyShape.format(debitsTotal).substring(1)}`}</div>
                 </div>
                 <div className='info-row'>
                   <div className='info-label'>Total Credits:</div>
                   <div className='info-value' data-testid='totalCredits'>{`${
-                    props.accounts[currentBankAccountIndex].currencyCode
+                    props.accounts[props.currentBankAccountIndex].currencyCode
                   } ${moneyShape.format(creditsTotal).substring(1)}`}</div>
                 </div>
               </div>
@@ -104,31 +97,33 @@ function AccountInformation(props: AccountInformationProps) {
                   <div
                     className='info-value'
                     data-testid='availableBalance'
-                  >{`${props.accounts[currentBankAccountIndex].currencyCode} ${
-                    props.accounts[currentBankAccountIndex].balances.available
-                      .creditDebitIndicator === 'Credit'
+                  >{`${
+                    props.accounts[props.currentBankAccountIndex].currencyCode
+                  } ${
+                    props.accounts[props.currentBankAccountIndex].balances
+                      .available.creditDebitIndicator === 'Credit'
                       ? ''
                       : '-'
                   } ${moneyShape
                     .format(
-                      props.accounts[currentBankAccountIndex].balances.available
-                        .amount
+                      props.accounts[props.currentBankAccountIndex].balances
+                        .available.amount
                     )
                     .substring(1)}`}</div>
                 </div>
                 <div className='info-row right'>
                   <div className='info-label'>Current Balance:</div>
                   <div className='info-value' data-testid='currentBalance'>{`${
-                    props.accounts[currentBankAccountIndex].currencyCode
+                    props.accounts[props.currentBankAccountIndex].currencyCode
                   } ${
-                    props.accounts[currentBankAccountIndex].balances.current
-                      .creditDebitIndicator === 'Credit'
+                    props.accounts[props.currentBankAccountIndex].balances
+                      .current.creditDebitIndicator === 'Credit'
                       ? ''
                       : '-'
                   } ${moneyShape
                     .format(
-                      props.accounts[currentBankAccountIndex].balances.current
-                        .amount
+                      props.accounts[props.currentBankAccountIndex].balances
+                        .current.amount
                     )
                     .substring(1)}`}</div>
                 </div>

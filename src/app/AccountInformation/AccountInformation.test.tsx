@@ -4,6 +4,8 @@ import AccountInformation from './AccountInformation'
 const AccountInformationComponent = () =>
   render(
     <AccountInformation
+      currentBankAccountIndex={0}
+      setBankAccountIndex
       accounts={[
         {
           currencyCode: 'USD',
@@ -59,7 +61,13 @@ const AccountInformationComponent = () =>
   )
 
 test('renders no data block', () => {
-  render(<AccountInformation accounts={[]} />)
+  render(
+    <AccountInformation
+      currentBankAccountIndex={0}
+      setBankAccountIndex
+      accounts={[]}
+    />
+  )
   const accountHolderNamesElement = screen.getByTestId('noinformationData')
   expect(accountHolderNamesElement).toBeInTheDocument()
 })
