@@ -6,6 +6,7 @@ import Transactions from './app/Transactions/Transactions'
 
 function App() {
   const [data, setData] = useState<any>({})
+  const [currentBankAccountIndex, setBankAccountIndex] = useState<number>(0)
 
   const getData = () => {
     try {
@@ -34,11 +35,19 @@ function App() {
           <CustomerData
             providerName={data.providerName}
             countryCode={data.countryCode}
-            accountHolderNames={data.accounts[0].accountHolderNames}
+            accountHolderNames={
+              data.accounts[currentBankAccountIndex].accountHolderNames
+            }
           />
 
-          <AccountInformation accounts={data.accounts} />
-          <Transactions transactions={data.accounts[0].transactions} />
+          <AccountInformation
+            accounts={data.accounts}
+            currentBankAccountIndex={currentBankAccountIndex}
+            setBankAccountIndex={setBankAccountIndex}
+          />
+          <Transactions
+            transactions={data.accounts[currentBankAccountIndex].transactions}
+          />
         </>
       )}
     </div>
