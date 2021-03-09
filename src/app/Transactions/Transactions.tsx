@@ -1,5 +1,6 @@
 import { useEffect, useState, memo } from 'react'
 import { Select, Input, Pagination } from 'antd'
+import NoData from '../NoData/NoData'
 import './Transactions.scss'
 
 interface TransactionsProps {
@@ -72,13 +73,19 @@ function Transactions(props: TransactionsProps) {
       <div className='section-title'>Transactions</div>
       <div className='account-holder-filter-row'>
         <div className='section-title' id='search-cell'>
-          <Search placeholder='Search' allowClear onSearch={onSearch} />
+          <Search
+            placeholder='Search'
+            allowClear
+            onSearch={onSearch}
+            data-testid='searchBox'
+          />
         </div>
         <div className='section-title' id='page-size-filter'>
           <Select
             placeholder='Page size'
             defaultValue='25'
             onChange={handlePageSizeChange}
+            data-testid='pageSizeFilter'
           >
             {pageSizes.map((size, index) => (
               <Option key={index} value={size}>
@@ -91,7 +98,10 @@ function Transactions(props: TransactionsProps) {
 
       {transactionRows.length > 0 ? (
         <>
-          <div className='details-block headings'>
+          <div
+            className='details-block headings'
+            data-testid='transactionTable'
+          >
             <div>Date and Description</div>
             <div>Category</div>
             <div>Amount</div>
@@ -127,7 +137,7 @@ function Transactions(props: TransactionsProps) {
           )}
         </>
       ) : (
-        <div className='no-transactions'>No transactions to display</div>
+        <NoData infoCategory='transactions' />
       )}
 
       {transactionRows.length > 0 && (
@@ -139,6 +149,7 @@ function Transactions(props: TransactionsProps) {
             pageSize={currentPageSize}
             showSizeChanger={false}
             onChange={onFlipPage}
+            data-testid='pagination'
           />
         </div>
       )}
