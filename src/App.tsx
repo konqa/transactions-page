@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.scss'
-import CustomerData from './components/CustomerData/CustomerData'
-import AccountInformation from './components/AccountInformation/AccountInformation'
-import Transactions from './components/Transactions/Transactions'
+import CustomerData from './app/CustomerData/CustomerData'
+import AccountInformation from './app/AccountInformation/AccountInformation'
+import Transactions from './app/Transactions/Transactions'
 
 function App() {
   const [data, setData] = useState<any>({})
