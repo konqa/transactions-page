@@ -1,0 +1,156 @@
+import { useState } from 'react'
+import { Select, Input, Pagination } from 'antd'
+import NoData from '../NoData/NoData'
+import './Transactions.scss'
+
+interface TransactionsProps {
+  transactions: any[]
+}
+
+const { Option } = Select
+
+const { Search } = Input
+
+const moneyShape = new Intl.NumberFormat('us-US', {
+  style: 'currency',
+  currency: 'USD',
+})
+
+function Transactions(props: TransactionsProps) {
+  const [pageSizes] = useState<string[]>(['25', '50', '100'])
+  const [currentPageSize, setCurrentPageSize] = useState<number>(25)
+  const [
+    currentTotalTransactions,
+    setCurrentTotalTransactions,
+  ] = useState<number>(props.transactions.length)
+  const [currentPageNumber, setCurrentPageNumber] = useState<number>(1)
+  const [currentSearchText, setCurrentSearchText] = useState<string>('')
+  const [transactionRows, setTransactionRows] = useState(props.transactions)
+
+  const resetSearch = (): void => {
+    setTransactionRows(props.transactions)
+    setCurrentTotalTransactions(props.transactions.length)
+    setCurrentPageNumber(1)
+  }
+
+  const processSearch = (value: string): void => {
+    const regexp = new RegExp(value, 'gi')
+    let newRows = props.transactions.filter(
+      (transaction) => transaction.description.search(regexp) > -1
+    )
+    setTransactionRows(newRows)
+    setCurrentTotalTransactions(newRows.length)
+    setCurrentPageNumber(1)
+    setCurrentSearchText(value)
+  }
+
+  const onSearch = (value: string): void => {
+    if (value === currentSearchText) {
+      return
+    } else if (value === '') {
+      resetSearch()
+    } else {
+      processSearch(value)
+    }
+  }
+
+  const onFlipPage = (value: number): void => {
+    setCurrentPageNumber(value)
+    document.querySelector('#transactions-block')?.scrollIntoView()
+  }
+
+  const handlePageSizeChange = (value: string): void => {
+    setCurrentPageSize(Number(value))
+    setCurrentPageNumber(1)
+  }
+
+  return (
+    <section className='transactions-block' id='transactions-block'>
+      <div className='section-title'>Transactions</div>
+      <div className='account-holder-filter-row'>
+        <div className='section-title' id='search-cell'>
+          <Search
+            placeholder='Search'
+            allowClear
+            onSearch={onSearch}
+            data-testid='searchBox'
+          />
+        </div>
+        <div className='section-title' id='page-size-filter'>
+          <Select
+            placeholder='Page size'
+            defaultValue='25'
+            onChange={handlePageSizeChange}
+            data-testid='pageSizeFilter'
+          >
+            {pageSizes.map((size, index) => (
+              <Option key={index} value={size}>
+                Show {size} entries
+              </Option>
+            ))}
+          </Select>
+        </div>
+      </div>
+
+      {transactionRows.length > 0 ? (
+        <>
+          <div
+            className='details-block headings'
+            data-testid='transactionTable'
+          >
+            <div>Date and Description</div>
+            <div>Category</div>
+            <div>Amount</div>
+          </div>
+
+          {transactionRows.map(
+            (transaction, index) =>
+              index >= currentPageSize * (currentPageNumber - 1) &&
+              index < currentPageSize * currentPageNumber && (
+                <div key={index} className='transaction-row bordered'>
+                  <div className='transaction-row description'>
+                    <div className='date'>
+                      {transaction.bookingDate.substring(0, 10)}
+                    </div>
+                    <span className='transaction-bullet'>&bull;</span>{' '}
+                    <div className='description-text'>
+                      {transaction.description}
+                    </div>
+                  </div>
+                  <div className='transaction-row category'>
+                    {transaction.enrichedData.category.name ===
+                    'Uncategorised' ? (
+                      ''
+                    ) : (
+                      <div>{transaction.enrichedData.category.name}</div>
+                    )}
+                  </div>
+                  <div className='transaction-row amount'>{`${
+                    transaction.creditDebitIndicator === 'Debit' ? '-' : ''
+                  }${moneyShape.format(transaction.amount).substring(1)}`}</div>
+                </div>
+              )
+          )}
+        </>
+      ) : (
+        <NoData infoCategory='transactions' />
+      )}
+
+      {transactionRows.length > 0 && (
+        <div className='footer-page-flipper'>
+          <Pagination
+            defaultCurrent={1}
+            current={currentPageNumber}
+            total={currentTotalTransactions}
+            pageSize={currentPageSize}
+            showSizeChanger={false}
+            onChange={onFlipPage}
+            data-testid='pagination'
+          />
+        </div>
+      )}
+    </section>
+  )
+}
+
+export default Transactions

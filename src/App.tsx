@@ -1,31 +1,52 @@
-import React from 'react'
-import logo from './logo.svg'
+import { useEffect, useState } from 'react'
 import './App.scss'
-import CustomerData from './components/CustomerData/CustomerData'
-import AccountInformation from './components/AccountInformation/AccountInformation'
-import Transactions from './components/Transactions/Transactions'
+import CustomerData from './app/CustomerData/CustomerData'
+import AccountInformation from './app/AccountInformation/AccountInformation'
+import Transactions from './app/Transactions/Transactions'
 
 function App() {
+  const [data, setData] = useState<any>({})
+  const [currentBankAccountIndex, setBankAccountIndex] = useState<number>(0)
+
+  const getData = () => {
+    try {
+      fetch('./data/apollo-carter.json')
+        .then((response) => {
+          return response.json()
+        })
+        .then((jsonData) => {
+          setData(jsonData)
+        })
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
   return (
     <div className='App'>
-      <CustomerData />
-      <AccountInformation />
-      <Transactions />
-
-      <header className='App-header'>
-        <img src={logo} className='App-logo' alt='logo' />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className='App-link'
-          href='https://reactjs.org'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Learn React
-        </a>
-      </header>
+      {Object.keys(data).length > 0 && (
+        <>
+          <CustomerData
+            providerName={data.providerName}
+            countryCode={data.countryCode}
+            accountHolderNames={
+              data.accounts[currentBankAccountIndex].accountHolderNames
+            }
+          />
+          <AccountInformation
+            accounts={data.accounts}
+            currentBankAccountIndex={currentBankAccountIndex}
+            setBankAccountIndex={setBankAccountIndex}
+          />
+          <Transactions
+            transactions={data.accounts[currentBankAccountIndex].transactions}
+          />
+        </>
+      )}
     </div>
   )
 }
