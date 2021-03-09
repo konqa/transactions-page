@@ -1,4 +1,4 @@
-import { useEffect, useState, memo } from 'react'
+import { useState } from 'react'
 import { Select, Input, Pagination } from 'antd'
 import NoData from '../NoData/NoData'
 import './Transactions.scss'
@@ -26,10 +26,6 @@ function Transactions(props: TransactionsProps) {
   const [currentPageNumber, setCurrentPageNumber] = useState<number>(1)
   const [currentSearchText, setCurrentSearchText] = useState<string>('')
   const [transactionRows, setTransactionRows] = useState(props.transactions)
-
-  // useEffect(() => {
-  //   console.log('props', props)
-  // }, [props])
 
   const resetSearch = (): void => {
     setTransactionRows(props.transactions)

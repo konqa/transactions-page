@@ -12,11 +12,9 @@ function App() {
     try {
       fetch('./data/apollo-carter.json')
         .then((response) => {
-          console.log(response)
           return response.json()
         })
         .then((jsonData) => {
-          console.log(jsonData)
           setData(jsonData)
         })
     } catch (error) {
@@ -39,7 +37,6 @@ function App() {
               data.accounts[currentBankAccountIndex].accountHolderNames
             }
           />
-
           <AccountInformation
             accounts={data.accounts}
             currentBankAccountIndex={currentBankAccountIndex}
